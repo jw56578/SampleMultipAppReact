@@ -7,27 +7,27 @@ class vdd extends Component
 {
     componentDidMount()
     {
-         this.props.source.registerMake(this);
     }
-    makeChangeHandler(){
+    modelChangeHandler(){
 
     }
     render(){
         var year = this.props.year ? this.props.year.year : null;
         var makes = this.props.makes && year ? this.props.makes[this.props.source.name][year] : [];
-        return <DropDown changedHandler={this.makeChangeHandler} data={makes} />
+        return <DropDown changedHandler={this.modelChangeHandler} data={makes} />
     }
 }
 function mapStateToProps(state){
     return {
-        makes:state.vehicleSelectorMakes,
-        year: state.vehicleSelectorYear
+        models:state.vehicleSelectorModels,
+        year: state.vehicleSelectorYear,
+        make: state.vehicleSelectorMake
     }
 }
 
 function mapDispatchToProps(dispatch){
-    return bindActionCreators({fetchModels},dispatch);
+    return bindActionCreators({fetchTrims},dispatch);
 }
-var MakeDropDown = connect(mapStateToProps,mapDispatchToProps)(vdd);
+var ModelDropDown = connect(mapStateToProps,mapDispatchToProps)(vdd);
 
-export {MakeDropDown};
+export {ModelDropDown};

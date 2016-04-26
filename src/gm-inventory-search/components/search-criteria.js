@@ -6,9 +6,9 @@ import {bindActionCreators} from 'redux';
 import {YearDropDown,MakeDropDown} from '../../components/vehicle-selector';
 //no idea how this would work
 import {GMVehicleSelectorSource} from '../../components/vehicle-selector';
-
+var gmsource = new GMVehicleSelectorSource();
 class SearchCriteria extends Component
-{
+{ 
     constructor(props, context) {
         super(props, context);
         this.state = {
@@ -22,9 +22,10 @@ class SearchCriteria extends Component
         //you woudl have to make it a class and make a new instance
         this.yearChanged = this.yearChanged.bind(this);
         this.makeChanged = this.makeChanged.bind(this);
+        
     }
     componentDidMount(){
-
+          
     }
     
     //i dont' want these functions to have to be on every single thing that uses vehicle selector drop downs
@@ -52,8 +53,8 @@ class SearchCriteria extends Component
                 Year
                 </td>
                 <td>
-                <YearDropDown source={GMVehicleSelectorSource} id={1}/>
-                <YearDropDown source={GMVehicleSelectorSource} id={2}/>
+                <YearDropDown source={gmsource} id={1}/>
+                <YearDropDown source={gmsource} id={2}/>
                 </td>
             </tr>
             <tr>
@@ -61,8 +62,8 @@ class SearchCriteria extends Component
                 Make
                 </td>
                 <td>
-                <MakeDropDown source={GMVehicleSelectorSource} id={1}/>
-                <MakeDropDown source={GMVehicleSelectorSource} id={2}/>
+                <MakeDropDown source={gmsource} id={1}/>
+                <MakeDropDown source={gmsource} id={2}/>
    
                 </td>
             </tr>

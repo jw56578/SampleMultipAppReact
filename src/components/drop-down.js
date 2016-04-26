@@ -14,8 +14,8 @@ class DropDown extends Component
         if(this.props.data){
             options = this.props.data.map(function(d){
                 var key = this.props.key ? d[this.props.key] : d;
-                var val = this.props.key ? d[this.props.value] : d;
-                var text = this.props.key ? d[this.props.text] : d;
+                var val = this.props.value ? d[this.props.value] : d;
+                var text = this.props.text ? d[this.props.text] : d;
                 return <option key={key} value={val}>{text}</option>
             }.bind(this));  
         }
