@@ -27,19 +27,39 @@ class GMVehicleSelectorSource{
         this.yearDropDown=null;
         this.makeDropDown=null;
         this.modelDropDown=null;
+        this.initSetTimeout = null;
     }
-
+    fetchMakes(year){
+        //i guess there should just be an id for this whole object instance
+        this.yearDropDown.props.fetchMakes(0,this,year);
+    }
+    init(){
+        if(!this.yearDropDown){
+           this.fetchMakes();
+        }
+        if(!this.makeDropDown)
+            this.fetchMakes = function(){};
+    }
+    resetInit(){
+        if(this.initSetTimeout)
+            clearTimeout(this.initSetTimeout);
+        this.initSetTimeout = setTimeout(function() {
+            this.init();
+        }.bind(this), 1);   
+    }
     registerYear(component){
+        this.resetInit();
         this.yearDropDown = component;
         var id = component.props.id;
         component.props.fetchYears(id, this);
         component.yearChangeHandler = function(year){
-             component.props.setYear(id,year);
-             if(this.makeDropDown)
-                component.props.fetchMakes(id,this,year);
-        }.bind(this); 
+            component.props.setYear(id,year);
+            this.fetchMakes(year);
+        }.bind(this);
+     
     }
     registerMake(component){
+        this.resetInit();
         this.makeDropDown = component;
         var id = component.props.id;
         component.makeChangeHandler = function(make){
@@ -53,11 +73,5 @@ class GMVehicleSelectorSource{
 export {VehicleSelector};
 export {YearDropDown};
 export {MakeDropDown};
-
-///how can you syncronize the make model year drop downs
-//there is no way to determine the order of when they are registered
-//if you register the make and the year isn't registered yet, how will it know to request all makes or wait till a year is choosen
-//how wouled anything even know if the make drop down desires to be updated 
-//for now lets just make the assumption that make/model..etc will never be by itself
 
 export {GMVehicleSelectorSource};
