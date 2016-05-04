@@ -10,6 +10,7 @@ import {save,getEntity} from '../../actions/entity';
 import {getChildCompanyId} from '../../services/authentication';
 import Modal from 'react-modal';
 import {getSearchingMessage,getErrorMessage} from '../messages'
+import {isFetching} from '../../actions/fetching';
 
 var externalSearchExport = function(){
 }
@@ -30,14 +31,17 @@ class SearchCriteria extends Component
         
     }
     componentDidMount(){
-          externalSearchExport =this.updateSearchResults;
-          this.props.getEntity('state');
+        //this is not a normal thing, only because this component is being used outside the react boundary           
+        externalSearchExport =this.updateSearchResults;
+        //load all ajax things in componentDidMount
+        this.props.getEntity('state');
     }
     updateSearchResults(){
         var opts = this.props.options  ? this.props.options.options : null;
         opts = typeof opts === "string" ?  [opts] : opts ;
         const {year,make,model} = this.props;
-        var criteria = {year:year ? year.year : null,
+        var criteria = {
+                    year:year ? year.year : null,
                     make :make  && make.make? make.make.id : null,
                     model : model && model.model? model.model.id : null,
                     sellingSourceId : make  && make.make ? make.make.sellingSourceId : null,
@@ -49,6 +53,7 @@ class SearchCriteria extends Component
             this.setState({searchCriteria:criteria,errorMessage:errormessage});
         }
         else{
+            this.props.isFetching('gm-inventory-search');
             this.setState({modalMessage:getSearchingMessage(criteria),searchCriteria:criteria,errorMessage:""});
             this.props.updateSearchResults(criteria);  
         }
@@ -74,11 +79,13 @@ class SearchCriteria extends Component
         this.props.setOption(1,null);
     }
     render(){
+        // compose of the isFetching and this.state.modalMessage
+        const{fetching,entity,options} = this.props;
+        var modalMessage = fetching && fetching.isFetching ? <span>{this.state.modalMessage}</span> : '';
         var gmsource = this.gmsource;
         var inputStyle= {width:'100px'};
         var divTableStyle = {height:'12em',display:'inline-block',marginRight:'50px'};
-        var states = this.props.entity ?  this.props.entity.entity : [];
-        var {options} = this.props;
+        var states = entity ?  entity.entity : [];
         var selectedOptions = options && options.options ? typeof options.options === 'string' ? [options.options] : options.options : [];
         var chooseTrim =    <Modal
                     isOpen={this.state.showModal}
@@ -209,8 +216,9 @@ class SearchCriteria extends Component
                 </table>
             </div>
             <br/>
+            {modalMessage}
             <span>{this.state.errorMessage}</span><br/>
-            <span>{this.state.modalMessage}</span>
+            
         </div>
 
         )
@@ -223,11 +231,12 @@ function mapStateToProps(state){
         model:state.vehicleSelectorModel,
         trim:state.vehicleSelectorTrim,
         entity:state.getEntity,
-        options:state.vehicleSelectorOption
+        options:state.vehicleSelectorOption,
+        fetching:state.fetching
     }
 }
 function mapDispatchToProps(dispatch){
-    return bindActionCreators({updateSearchResults,getEntity,setOption},dispatch);
+    return bindActionCreators({updateSearchResults,getEntity,setOption,isFetching},dispatch);
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(SearchCriteria);

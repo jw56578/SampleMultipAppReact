@@ -2,6 +2,7 @@ export const UPDATE_SEARCH_CRITERIA = "UPDATE_SEARCH_CRITERIA";
 export const UPDATE_SEARCH_RESULTS = "UPDATE_SEARCH_RESULTS";
 import {get,post} from '../../services/api';
 
+
 //how should this thing handle calling different apis for what source you want just a string?
 function updateSearchCriteria(criteria){
     return {

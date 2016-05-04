@@ -10,7 +10,20 @@ function GetEntity(state=null,action){
     }
     return state;
 }
+//there just needs to be a seperate reducer per type that all handle the GET_ENTITY type
+function state(state=null,action){
+    switch(action.type){
+        case GET_ENTITY:
+            var type = action.meta.type;
+            if(type === 'state'){
+                var entity = action.payload.data;
+                return Object.assign({}, state, entity);
+            }
+    }
+    return state;  
+}
+
 var reducers = {
-    getEntity:GetEntity,
+    getEntity:GetEntity
 }
 export {reducers};
