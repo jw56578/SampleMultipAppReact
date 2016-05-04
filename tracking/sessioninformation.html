@@ -1,0 +1,45 @@
+﻿<div ng-include="'../app/tracking/header.html'"></div>
+<div>
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-2">
+            <span class="label">IP:</span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
+            <span class="label highlight">{{session.IpAddress}}</span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
+            <span class="label">Viewing:</span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4">
+            <span class="label highlight">{{getParameterFromLatestEvent(session,'pathName').Value}}</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-2">
+            <span class="label">Last Visit:</span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
+            <span class="label highlight">{{getLatestEvent(session).DateEntered | date:"MM/dd/yyyy 'at' h:mma"}}</span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
+            <span class="label">Source:</span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4">
+            <span class="label highlight">{{getParameterFromLatestEvent(session,'referrer').Value}}</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3 col-md-3 col-sm-3">
+            <span class="label">Page Views:</span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
+            <span class="label highlight">{{session.PageViews}}</span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
+            <span class="label">Cookie:</span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-3">
+            <span class="label highlight">{{session.SessionToken}}</span>
+        </div>
+    </div>
+</div>

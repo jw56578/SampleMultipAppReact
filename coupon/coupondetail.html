@@ -1,0 +1,221 @@
+﻿<div ng-include="'../app/coupon/header.html'"></div>
+
+<div style="">
+    <div class="container view">
+        <div class="row">
+            <div class="section">
+                <div class="section">
+                    <div class="section-content not-vertically-centered has-blocks">
+                        <div class="section-block">
+                            <div class="row" name="couponForm">
+                                <!-- column 1 -->
+                                <div class="col-md-6">
+                                    <!-- column 1.1 -->
+
+                                    <div class="row">
+                                        <div class="col-md-12 editorSection">
+                                            <div class="sectionHeading">Format</div>
+                                            <div class="editorSectionInner">
+                                                <div class="row">
+                                                    <div ng-repeat="layout in layouts">
+                                                        <div ng-model="currentCoupon" ng-click="handleLayoutChange(layout.Id)" id="couponButton_{{ layout.Id }}" class="couponButton" style="background-image:url('button{{ layout.Id }}_grey.png'); height: 111px; width: 111px; margin-right: 10px; cursor: pointer; float: left;">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 editorSection" style="min-height: 530px;">
+                                        <div>
+                                            <div class="sectionHeading">Content</div>
+                                            <div class="editorSectionInner">
+                                                <div class="row">
+                                                    <div class="input-group input-group-sm">
+
+                                                        <!-- Remove the display none in the future so these can be edited by the user, leaving hidden for now, the default values are hardcoded in coupondetailcontroller.js -->
+
+                                                        <input type="text" class="form-control" name="formHeader" ng-value="Header" ng-model="currentCoupon.Header" style="display: none;" />
+                                                        <input type="text" class="form-control" name="formTitle" ng-value="FormTitle" ng-model="currentCoupon.FormTitle" style="display: none;" />
+
+                                                        <span class="input-group-addon">Coupon Type: </span>
+                                                        <select class="form-control" ng-model="currentType" ng-options="type.Name for type in types"></select>
+                                                    </div>
+                                                </div>
+
+
+                                                <div ng-show="isNumber(currentCoupon.CouponLayoutId)">
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Title Text: </span>
+                                                            <input type="text" class="form-control" name="formTitle" ng-model="currentCoupon.Title" maxlength="57">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Body Text: </span>
+                                                            <input type="text" class="form-control" name="formBody" ng-model="currentCoupon.Body" maxlength="57">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Disclaimer Text: </span>
+                                                            <textarea class="form-control" value="" style="height: 60px;" maxlength="375" ng-model="currentCoupon.Disclaimer" />
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row" ng-show="currentType.Name == 'Model'">
+                                                        <div class="row">
+                                                            <div class="input-group input-group-sm">
+                                                                <span class="input-group-addon">New/Used: </span>
+                                                                <select class="form-control" ng-model="currentNewUsed" ng-options="status.value for status in newUsed"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="input-group input-group-sm">
+                                                                <span class="input-group-addon">Make: </span>
+                                                                <select class="form-control" ng-model="currentMake" ng-options="make.Value for make in makes | filter:makeFilter"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="input-group input-group-sm">
+                                                                <span class="input-group-addon">Model: </span>
+                                                                <select class="form-control" ng-model="currentCoupon.Model" ng-options="model.Value as model.Value for model in models"></select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 editorSection" style="min-height: 530px;">
+                                        <div>
+                                            <div class="sectionHeading">Style</div>
+                                            <div class="editorSectionInner">
+
+                                                <fieldset>
+                                                    <legend>Coupon</legend>
+
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Header Bg: </span>
+                                                            <input id="fontColor" type="text" class="form-control" ng-model="currentCoupon.CouponHeaderBackgroundHex" colorpicker readonly style="cursor:alias">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Header Text: </span>
+                                                            <input id="fontColor" type="text" class="form-control" ng-model="currentCoupon.CouponHeaderFontHex" colorpicker readonly style="cursor:alias">
+                                                        </div>
+                                                    </div>
+
+
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Background: </span>
+                                                            <input id="fontColor" type="text" class="form-control" ng-model="currentCoupon.CouponContainerBackgroundHex" colorpicker readonly style="cursor:alias">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Title Text: </span>
+                                                            <input id="fontColor" type="text" class="form-control" ng-model="currentCoupon.CouponTitleFontHex" colorpicker readonly style="cursor:alias">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Body Text: </span>
+                                                            <input id="fontColor" type="text" class="form-control" ng-model="currentCoupon.CouponBodyFontHex" colorpicker readonly style="cursor:alias">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Disclaimer Text: </span>
+                                                            <input id="fontColor" type="text" class="form-control" ng-model="currentCoupon.CouponDisclaimerFontHex" colorpicker readonly style="cursor:alias">
+                                                        </div>
+                                                    </div>
+
+                                                </fieldset>
+
+                                                <hr />
+
+                                                <fieldset>
+                                                    <legend>Form</legend>
+
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Background: </span>
+                                                            <input id="fontColor" type="text" class="form-control" ng-model="currentCoupon.FormBackgroundHex" colorpicker readonly style="cursor:alias">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Title Text: </span>
+                                                            <input id="fontColor" type="text" class="form-control" ng-model="currentCoupon.FormTitleFontHex" colorpicker readonly style="cursor:alias">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Label Text: </span>
+                                                            <input id="fontColor" type="text" class="form-control" ng-model="currentCoupon.FormLabelFontHex" colorpicker readonly style="cursor:alias">
+                                                        </div>
+                                                    </div>
+
+                                                </fieldset>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12 editorSection">
+                                            <div>
+                                                <div class="sectionHeading">Images</div>
+                                                <div class="editorSectionInner">
+                                                    <div class="row">
+                                                        <div class="input-group input-group-sm">
+                                                            <span class="input-group-addon">Main Image</span>
+                                                            <button file-upload plurl="coupon.aspx?fileupload=true" base-id="base" preview-id="uploadedImage" ng-model="fileupload.stuff" type="button" class="btn btn-sm btn-default btn-block">
+                                                                <span>Browse Image</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="col-md-12 editorSection" style="min-height: 608px;">
+                                        <div>
+                                            <div class="sectionHeading">Coupon View</div>
+                                            <table align="center" cellpadding="20">
+                                                <tr>
+                                                    <td valign="middle">
+                                                        <span ng-show="!isNumber(currentCoupon.CouponLayoutId)">
+                                                            This is where the preview will be loaded as the drop down of 'Format' is changed.
+                                                            <!--the div will have a ng-include="template.url"
+                                                            this should then load a url to a server page that will load the layout from the database and respond the markup-->
+                                                        </span>
+                                                        <div ng-include="currentLayout.url"></div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- column 2 -->
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+

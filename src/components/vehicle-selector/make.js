@@ -2,8 +2,8 @@ import React, {Component,PropTypes} from 'react';
 import DropDown from '../drop-down';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {fetchYears,fetchMakes,fetchModels,fetchTrims} from '../../actions/vehicle-selector';
-class vdd extends Component
+import {fetchYears,fetchMakes,fetchModels,fetchTrims,setMake} from '../../actions/vehicle-selector';
+class MakeDropDownComponent extends Component
 {
     componentDidMount()
     {
@@ -14,8 +14,8 @@ class vdd extends Component
     }
     render(){
         var year = this.props.year ? this.props.year.year : null;
-        var makes = this.props.makes && year ? this.props.makes[this.props.source.name][year] : [];
-        return <DropDown changedHandler={this.makeChangeHandler} data={makes} />
+        var makes = this.props.makes && year && this.props.makes[this.props.source.name][year] ? this.props.makes[this.props.source.name][year] : [];
+        return <DropDown changedHandler={this.makeChangeHandler} data={makes} keyProp={'id'} text={'description'} value={'id'}  style={this.props.style}/>
     }
 }
 function mapStateToProps(state){
@@ -26,8 +26,8 @@ function mapStateToProps(state){
 }
 
 function mapDispatchToProps(dispatch){
-    return bindActionCreators({fetchModels},dispatch);
+    return bindActionCreators({fetchModels,setMake},dispatch);
 }
-var MakeDropDown = connect(mapStateToProps,mapDispatchToProps)(vdd);
+var MakeDropDown = connect(mapStateToProps,mapDispatchToProps)(MakeDropDownComponent);
 
 export {MakeDropDown};

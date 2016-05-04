@@ -1,99 +1,236 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import DropDown from '../../components/drop-down';
-import {fetchYears,fetchMakes,fetchModels,fetchTrims} from '../../actions/vehicle-selector';
+import {fetchYears,fetchMakes,fetchModels,fetchTrims,setOption} from '../../actions/vehicle-selector';
 import {bindActionCreators} from 'redux';
-import {YearDropDown,MakeDropDown} from '../../components/vehicle-selector';
-//no idea how this would work
+import {YearDropDown,MakeDropDown,ModelDropDown,TrimDropDown,OptionDropDown} from '../../components/vehicle-selector';
+import {updateSearchResults,updateSearchCriteria} from '../actions/search';
 import {GMVehicleSelectorSource} from '../../components/vehicle-selector';
-var gmsource = new GMVehicleSelectorSource();
+import {save,getEntity} from '../../actions/entity';
+import {getChildCompanyId} from '../../services/authentication';
+import Modal from 'react-modal';
+import {getSearchingMessage,getErrorMessage} from '../messages'
+
+var externalSearchExport = function(){
+}
+var externalSearch = function() {
+    externalSearchExport()
+}
 class SearchCriteria extends Component
 { 
     constructor(props, context) {
         super(props, context);
-        this.state = {
-            year: "333",
-            make:"BMW",
-            model:"",
-            trim:""
-        };
-        //could you import the vehicle specific drop down from the import?
-        //this would mean that the same drop down would be used all the time so you could not have multiple vehicle selectors on the same page
-        //you woudl have to make it a class and make a new instance
-        this.yearChanged = this.yearChanged.bind(this);
-        this.makeChanged = this.makeChanged.bind(this);
+        this.testSaveVehicle = this.testSaveVehicle.bind(this);
+        this.updateCriteria = this.updateCriteria.bind(this);
+        this.updateSearchResults = this.updateSearchResults.bind(this);
+        this.stateChangedHandler = this.stateChangedHandler.bind(this);
+        this.clear = this.clear.bind(this);
+        this.state= {showModal:false,states : null,errorMessage:'',searchCriteria:{}};
+        this.gmsource = new GMVehicleSelectorSource();
         
     }
     componentDidMount(){
-          
+          externalSearchExport =this.updateSearchResults;
+          this.props.getEntity('state');
     }
-    
-    //i dont' want these functions to have to be on every single thing that uses vehicle selector drop downs
-    //where to put this
-    yearChanged(year){
-        this.setState({year});
-        this.props.fetchMakes();
+    updateSearchResults(){
+        var opts = this.props.options  ? this.props.options.options : null;
+        opts = typeof opts === "string" ?  [opts] : opts ;
+        const {year,make,model} = this.props;
+        var criteria = {year:year ? year.year : null,
+                    make :make  && make.make? make.make.id : null,
+                    model : model && model.model? model.model.id : null,
+                    sellingSourceId : make  && make.make ? make.make.sellingSourceId : null,
+                    optionCodes: opts,
+                };
+        criteria = Object.assign({},this.state.searchCriteria,criteria);
+        var errormessage = getErrorMessage(criteria);
+        if(errormessage){
+            this.setState({searchCriteria:criteria,errorMessage:errormessage});
+        }
+        else{
+            this.setState({modalMessage:getSearchingMessage(criteria),searchCriteria:criteria,errorMessage:""});
+            this.props.updateSearchResults(criteria);  
+        }
+         
     }
-    makeChanged(make){
-        this.setState({make});
-        this.props.fetchModels(this.state.year,this.state.make);
+    updateCriteria(field,event){
+        var criteria ={};
+        criteria[field] = event.target.value;
+        criteria = Object.assign({},this.state.searchCriteria,criteria);
+        this.setState({searchCriteria:criteria});
     }
-    modelChanged(model){
-        this.setState({make});
-        this.props.fetchModels(this.state.year,this.state.make);
+    testSaveVehicle(){
+        this.props.save('vehicle',{make:'Ford',model:'Mustang',companyId:getChildCompanyId()});
+    }
+    stateChangedHandler(states){
+        states = typeof states === "string" ? {state:states,states:null} :  {states,state:null}
+        var criteria = Object.assign({},this.state.searchCriteria,states);
+        this.setState({searchCriteria:criteria});
+    }
+ 
+    clear(){
+        this.setState({searchCriteria:{}});   
+        this.props.setOption(1,null);
     }
     render(){
-        var years = this.props.years ? this.props.years.data : [];
+        var gmsource = this.gmsource;
+        var inputStyle= {width:'100px'};
+        var divTableStyle = {height:'12em',display:'inline-block',marginRight:'50px'};
+        var states = this.props.entity ?  this.props.entity.entity : [];
+        var {options} = this.props;
+        var selectedOptions = options && options.options ? typeof options.options === 'string' ? [options.options] : options.options : [];
+        var chooseTrim =    <Modal
+                    isOpen={this.state.showModal}
+                    >
+                    {this.state.modalMessage}
+                </Modal>   
         return(
-        <table>
-            <thead></thead>
-            <tbody>
-            <tr>
-                <td>
-                Year
-                </td>
-                <td>
-                <YearDropDown source={gmsource} id={1}/>
-                <YearDropDown source={gmsource} id={2}/>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                Make
-                </td>
-                <td>
-                <MakeDropDown source={gmsource} id={1}/>
-                <MakeDropDown source={gmsource} id={2}/>
-   
-                </td>
-            </tr>
-            <tr>
-                <td>
-                Model
-                </td>
-                <td>
-               <DropDown changedHandler={this.modelChanged} data={this.props.models}  selectedValue={this.state.model}/>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+        <div>
+            <br/>
+            <div style={divTableStyle}>
+                <table>
+                    <thead></thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            Year
+                        </td>
+                        <td>
+                            <YearDropDown source={gmsource} id={1} style={inputStyle}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        Make
+                        </td>
+                        <td>
+                            <MakeDropDown source={gmsource} id={1} style={inputStyle}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Model
+                        </td>
+                        <td>
+                            <ModelDropDown source={gmsource} id={1} style={inputStyle}/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                 
+                        </td>
+                        <td>
+                           
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div style={divTableStyle}>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                Options:<br/>
+                                <OptionDropDown selectedValue={selectedOptions} source={gmsource} id={1} style={{width:'400px',height:'10em'}}/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div style={divTableStyle}>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                States:<br/>
+                                <DropDown selectedValue={this.state.searchCriteria.states || [this.state.searchCriteria.state]} multiselect={true} changedHandler={this.stateChangedHandler} data={states} keyProp={'value'} text={'value'} value={'value'}  style={{height:'10em',width:'80px'}}/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div style={divTableStyle}>
+                <table>
+                    <thead></thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            Distance
+                        </td>
+                        <td>
+                            <input value={this.state.searchCriteria.distance} style={inputStyle} onChange={this.updateCriteria.bind(this,'distance')} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        City
+                        </td>
+                        <td>
+                           <input value={this.state.searchCriteria.city} style={inputStyle} onChange={this.updateCriteria.bind(this,'city')} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Zip
+                        </td>
+                        <td>
+                            <input value={this.state.searchCriteria.zipcode}  style={inputStyle} onChange={this.updateCriteria.bind(this,'zipcode')} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            BAC
+                        </td>
+                        <td>
+                            <input  value={this.state.searchCriteria.vendorId} style={inputStyle} onChange={this.updateCriteria.bind(this,'vendorId')} />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                           <button type="button" onClick={this.clear}>Clear All</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br/>
+            <span>{this.state.errorMessage}</span><br/>
+            <span>{this.state.modalMessage}</span>
+        </div>
+
         )
     }
 }
 function mapStateToProps(state){
-    //need to put the state values in the index reducer combined
-    //i don't want to have to do this for every single component that uses vehicle selector drop downs
     return {
-        years:state.vehicleSelectorYears,
-        makes:state.vehicleSelectorMakes,
-        models:state.vehicleSelectorModels,
-        trms:state.vehicleSelectorTrims
+        year:state.vehicleSelectorYear,
+        make:state.vehicleSelectorMake,
+        model:state.vehicleSelectorModel,
+        trim:state.vehicleSelectorTrim,
+        entity:state.getEntity,
+        options:state.vehicleSelectorOption
     }
 }
 function mapDispatchToProps(dispatch){
-    return bindActionCreators({fetchYears,fetchMakes,fetchModels,fetchTrims},dispatch);
+    return bindActionCreators({updateSearchResults,getEntity,setOption},dispatch);
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(SearchCriteria);
+export {externalSearch};
 
 

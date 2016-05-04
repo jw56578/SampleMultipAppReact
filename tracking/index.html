@@ -1,0 +1,34 @@
+﻿
+
+<div class='header2 row' >
+    <div class='header1 col1 col-lg-12 col-md-12'>
+        Search Customers: <input ng-model="query" placeholder="Text to filter">
+        <button ng-click="changeClaimedView()" type="button" ng-disabled="unclaimed == '!'">Unclaimed</button>
+        <button ng-click="changeClaimedView()" type="button" ng-disabled="unclaimed == '!!'">My Claims</button>
+    </div>
+</div>
+
+<div class="row" ng-repeat="(index,session) in data | filter:query | filter:{ ClaimedByUserId: unclaimed } | orderBy:orderByField:reverseSort">
+    <div class="col2 col-lg-12 col-md-12">
+       
+            <a class=" btn-xs" href="#/session/{{session.Id}}">Visitor : {{session.IpAddress}}</a>
+
+            <div ng-click="sendCoupon(session)">Send Coupon</div>
+        
+        <span ng-click="isShown = !isShown">
+            Viewing : {{getParameterValue(getLatestEvent(session),'pathName')}}
+            <div class="visits" ng-show="isShown" ng-repeat="page in session.visits">
+                {{page}}<br />
+            </div>
+        </span><br />
+        Last Visit : {{getLatestEvent(session).DateEntered | date:"MM/dd/yyyy 'at' h:mma"}}.<br />
+        Source : {{getParameterValue(getLatestEvent(session),'referrer')}}.<br />
+        Page Views : {{}}<br />
+        Cookie : {{session.SessionToken}}<br />
+        Connection Id : {{getParameterValue(getLatestEvent(session),'connectionid')}}<br />
+        <span ng-switch on="session.couponServed">
+            <span ng-switch-when=''>Offer Coupon</span>
+            <span ng-switch-default>Coupon :</span>
+        </span> {{session.couponServed}}
+    </div>
+</div>

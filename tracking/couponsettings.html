@@ -1,0 +1,51 @@
+﻿<div ng-include="'../app/tracking/header.html'"></div>
+<div class="container view">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+            <div class="section">
+                <div class="section-content not-vertically-centered has-blocks">
+                    <div class="section-block">
+
+                        <div class="row">
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <span class="label">Auto Push:</span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <input type="checkbox"  value="" ng-model="couponSettings.AutoPush">
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <span class="label">Auto Push Minutes:</span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <input type="text" class="form-control" value="" ng-model="couponSettings.AutoPushMinutes">
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <span class="label">Auto Push Vehicle Views:</span>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6">
+                                        <input type="text" class="form-control" value="" ng-model="couponSettings.AutoPushVehicleViews">
+                                    </div>
+
+                                </div>
+                     
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

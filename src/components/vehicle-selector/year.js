@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {fetchYears,fetchMakes,setYear} from '../../actions/vehicle-selector';
 
-class vdd extends Component
+class YearDropDownComponent extends Component
 {
     componentDidMount()
     {
@@ -12,7 +12,8 @@ class vdd extends Component
     }
     render(){
         var years = this.props.years ? this.props.years[this.props.source.name] : [];
-        return <DropDown changedHandler={this.yearChangeHandler} data={years} />
+        years.sort(function(a, b){return parseInt(b.year)-parseInt(a.year)});
+        return <DropDown keyProp={'year'} value={'year'} text={'year'} changedHandler={this.yearChangeHandler} data={years}  style={this.props.style}/>
     }
 }
 
@@ -25,6 +26,6 @@ function mapStateToProps(state){
 function mapDispatchToProps(dispatch){
     return bindActionCreators({fetchYears,fetchMakes,setYear},dispatch);
 }
-var YearDropDown = connect(mapStateToProps,mapDispatchToProps)(vdd);
+var YearDropDown = connect(mapStateToProps,mapDispatchToProps)(YearDropDownComponent);
 
 export {YearDropDown};

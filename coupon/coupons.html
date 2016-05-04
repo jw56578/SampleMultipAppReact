@@ -1,0 +1,50 @@
+﻿<div ng-include="'../app/coupon/header.html'"></div>
+<style type="text/css">
+            .active {
+                background-color: #99CC99;
+            }
+            .inActive {
+                background-color: #FF9999;
+            }
+        </style>
+<table class="table table-bordered" style="width:100%">
+    <div class="container">
+        <div class="row">
+            <div style="padding:5px; width:250px;">
+                <div class="input-group input-group-sm" style="width:275px;">
+                    <input ng-model="couponFilter" class="form-control" placeholder="Search" />
+                    <span class="input-group-addon">Coupons</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div style="font-family:Arial;">
+            <div ng-repeat="(index,coupon) in coupons | filter:couponFilter | orderBy:orderByField:reverseSort">
+                <div class="container" style="width:440px; height:120px; padding:5px; float:left;">
+                    <div class="well" style="border: solid 1px #b2b2b2; height:100%;">
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2" style="text-align:center; height:100%; margin: auto auto;"  ng-class="{active: coupon.Active}">
+                                <input ng-model="coupon.Active" type="checkbox" style="position:relative; top: 35%;" />
+                            </div>
+                            <div ng-click="go(coupon)" class="col-md-3 col-lg-3 col-sm-3 col-xs-3">
+                                <div>
+                                    <div><img class="img-thumbnail" ng-src='../webservices/scriptingservices/functions.ashx?cmd=getfile&source=couponphoto&filename={{coupon.ImageId}}&cid=1' /></div>
+                                </div>
+                            </div>
+                            <div style="font-size:x-small;" class="col-md-7 col-lg-7 col-sm-7">
+                                <h6>{{coupon.Title}}&nbsp;</h6>
+                                <p>
+                                    {{coupon.NewUsed}} {{coupon.Make}} {{coupon.Model}}
+                                    <br />
+                                </p>
+                            </div> 
+                    </div>
+                </div>
+            </div>
+        </div>       
+    </div>
+</table>
+
+<div>
+    
+</div>

@@ -1,0 +1,113 @@
+﻿<div ng-include="'../app/tracking/header.html'"></div>
+<div class="report">
+    <div class="container view">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="section">
+                    <div class="section-content not-vertically-centered has-blocks">
+                        <div class="section-block">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <span class="label">Totals For: {{date.from}} - {{date.to}}</span>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="section">
+                    <div class="section-content not-vertically-centered has-blocks">
+                        <div class="section-block">
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <span class="label">UNIQUE VISITORS:</span>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 ">
+                                    <span class="label highlight">{{data.UniqueVisits}}</span>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <span class="label">PAGE VIEWS:</span>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 highlight"><span class="label highlight">{{data.PageViews}}</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <span class="label">LEAD GENERATED:</span>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 highlight">
+                                    <span class="label highlight">{{data.LeadsGeneratedByCoupon}} / {{data.LeadsGeneratedByCouponPercentage}} %</span>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <span class="label">COUPONS SENT:</span>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3"><span class="label highlight">{{data.CouponsSent}} / {{data.CouponsSentPercentage}} %</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <span class="label">COUPON APPOINTMENTS SET:</span>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 highlight"><span class="label highlight">{{data.CouponAppointments}} / {{data.CouponAppointmentsPercentage}} %</span></div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <span class="label">COUPON SALES:</span>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3"><span class="label highlight">{{data.CouponSales}} / {{data.CouponSalesPercentage}} %</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row month" ng-repeat="(index,month) in data.Months | filter:query | orderBy:orderByField:reverseSort">
+
+            <div class="col-lg-12 col-md-12 col-sm-12" ng-click="showDays(month)">
+                <div class="section">
+                    <div class="section-content not-vertically-centered has-blocks">
+                        <div class="section-block">
+                            <div class="row">
+                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                    <span class="label"> {{month.Date | date:'MMMM'}}</span>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <span class="label">UNIQUE VISITORS:</span>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 "><span class="label highlight">{{month.UniqueVisits}}</span></div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <span class="label">PAGE VIEWS:</span>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3 highlight"><span class="label highlight">{{month.PageViews}}</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <span class="label">LEAD GENERATED:</span>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 highlight"><span class="label highlight">{{month.LeadsGeneratedByCoupon}} / {{month.LeadsGeneratedByCouponPercentage}} %</span></div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <span class="label">COUPONS SENT:</span>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3"><span class="label highlight">{{month.CouponsSent}} / {{month.CouponsSentPercentage}} %</span></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4 col-md-4 col-sm-4">
+                                    <span class="label">COUPON APPOINTMENTS SET:</span>
+                                </div>
+                                <div class="col-lg-2 col-md-2 col-sm-2 highlight"><span class="label highlight">{{month.CouponAppointments}} / {{month.CouponAppointmentsPercentage}} %</span></div>
+                                <div class="col-lg-3 col-md-3 col-sm-3">
+                                    <span class="label">COUPON SALES:</span>
+                                </div>
+                                <div class="col-lg-3 col-md-3 col-sm-3"><span class="label highlight">{{month.CouponSales}} / {{month.CouponSalesPercentage}} %</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

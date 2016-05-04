@@ -1,0 +1,77 @@
+﻿<div ng-include="'../app/tracking/header.html'"></div>
+<div class="sessions">
+    <div class="session row" ng-repeat="(index,session) in data | filter:filter.value | sessions | orderBy:orderByField:reverseSort">
+        <div ng-click="go(session)">
+            <div class="row">
+                <div class="col-lg-1 col-md-1 col-sm-1" ng-hide="session.Customer">
+                    <label >IP:</label>
+                </div>
+                <div class="col-lg-1 col-md-1 col-sm-1" ng-show="session.Customer">
+                    <label >Customer:</label>
+                </div>
+
+                <div class="col-lg-2 col-md-2 col-sm-2" ng-hide="session.Customer">
+                    <label class="highlight">{{session.IpAddress}}</label>
+                    <label class="highlight" ng-show="session.Online">(Online)</label>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2" ng-show="session.Customer">
+                    <label class="highlight">{{session.Customer.FullName}}</label>
+                    <label class="highlight" ng-show="session.Online">(Online)</label>
+                </div>
+
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <label >Time On Today:</label>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <label class="highlight">Hrs:{{session.HourToday}} Minutes:{{session.MinutesToday}}</label>
+                </div>
+                <div class="col-lg-1 col-md-1 col-sm-1">
+                    <label >Last Viewed:</label>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <label class="highlight">{{session.LastPage}}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-1 col-md-1 col-sm-1">
+                    <label >Last Visit:</label>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <label class="highlight">{{session.LastPageVisit | date:"MM/dd/yyyy 'at' h:mma"}}</label>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <label >Last Coupon Sent:</label>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <label class="highlight">{{session.LastCouponSentTitle}}</label>
+                </div>
+                <div class="col-lg-1 col-md-1 col-sm-1">
+                    <label >Source:</label>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <label class="highlight">{{session.FirstEvent.Referrer}}</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-1 col-md-1 col-sm-1">
+                    <label >Page Views:</label>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <label class="highlight">{{session.PageViews}}</label>
+                </div>
+                <div class="col-lg-2 col-md-2 col-sm-2">
+                    <label >Vehicle:</label>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <label class="highlight">{{session.MostViewedVehicle}}</label>
+                </div>
+                <div class="col-lg-1 col-md-1 col-sm-1">
+                    <label >Cookie:</label>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-3">
+                    <label class="highlight">{{session.SessionToken}}</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
