@@ -10,6 +10,7 @@ class SearchResult extends Component
         super(props, context);
         this.state = {vehicleDetailVisible:false};
         this.sort = this.sort.bind(this);
+        this.sortFields ={};
     }
     componentDidMount(){
        
@@ -17,58 +18,56 @@ class SearchResult extends Component
     showVehicleDetail(){
         this.setState({vehicleDetailVisible:true});
     }
-    sort(sort){
+    sort(field,p){
         /**
          * this is going to be ackward because if you are using redux and mapping state to props, you cannot put the props back on local state
          * this means that you cannot modify the things on props because its readonly
          * you have to send the sort through the entire redux pipeline just to get the results back
          * if there is a generic sort function for the entire app, how can it handle sorting the specific thing for gm search resuls
          * a quick fix is to sort the results on props and assign to a new state field , then in render check for that field to exist and use it
+         * but this is going to break when you do another search because it will be ignored since the sortedResults are there
          */
+         //move all the sort stuff to reusable thing or import existing package
 
-        var sortedResults = this.props.results.sort(sort);
+        var sortBy = function(field, reverse, primer){
+
+            var key = primer ? 
+                function(x) {return primer(x[field])} : 
+                function(x) {return x[field]};
+
+            reverse = !reverse ? 1 : -1;
+
+            return function (a, b) {
+                return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+                } 
+        }
+        var reverse = this.sortFields[field] !== undefined ? this.sortFields[field] = !this.sortFields[field]  :  this.sortFields[field] = false;
+        var sortedResults = this.props.results.sort(sortBy(field,reverse,p));
         this.setState({sortedResults});
     }
     render(){
-
+        
         var tableStyle = {
             overflow: 'visible',
             borderStyle: 'none',
             width: '100%',
             borderCollapse: 'collapse' 
         };
-        function sortInt(a,b){
-            if (parseInt(a[this]) < parseInt(b[this]))
-                return -1;
-            else if (parseInt(a[this]) > parseInt(b[this]))
-                return 1;
-            else 
-                return 0;
-        }
-        //move to reusable thing or import existing package
-        function sortString(a, b){
-            if (a[this] < b[this])
-                return -1;
-            else if (a[this] > b[this])
-                return 1;
-            else 
-                return 0;
-        }
         var headers = [ 
-            {width:"50px" ,text:"Year",field:'year',sort:sortInt},
-            {width:"50px" ,text:"Model",field:'model',sort:sortString},
-            {width:"75px" ,text:"Model Code",field:'modelCode',sort:sortString},
-            {width:"100px",text:"Trim",field:'trim',sort:sortString},
-            {width:"25px" ,text:"Price",field:'price',sort:sortInt},
-            {width:"50px" ,text:"VIN",field:'vin',sort:sortString},
-            {width:"20px" ,text:"Dealer",field:'dealer',sort:sortString},
-            {width:"75px" ,text:"City",field:'city',sort:sortString},
-            {width:"75px" ,text:"Phone",field:'phone',sort:sortString},
-            {width:"75px" ,text:"Distance",field:'distance',sort:sortInt}
+            {id:0,width:"50px" ,text:"Year",field:'year',primer:parseInt},
+            {id:1,width:"50px" ,text:"Model",field:'model'},
+            {id:2,width:"75px" ,text:"Model Code",field:'modelCode'},
+            {id:3,width:"100px",text:"Trim",field:'trim'},
+            {id:4,width:"25px" ,text:"Price",field:'price',primer:parseFloat},
+            {id:5,width:"50px" ,text:"VIN",field:'vin'},
+            {id:6,width:"20px" ,text:"Dealer",field:'dealer'},
+            {id:7,width:"75px" ,text:"City",field:'city'},
+            {id:8,width:"75px" ,text:"Phone",field:'phone'},
+            {id:9,width:"75px" ,text:"Distance",field:'distance',primer:parseInt}
         ]
-        headers = headers.map((h)=>{
+        var ths = headers.map((h)=>{
             let thstyle = {width:'auto',minWidth:h.width};
-            return <th onClick={this.sort.bind(this,h.sort.bind(h.field))} key={h.text} style={thstyle} className="header">{h.text}</th>;
+            return <th onClick={this.sort.bind(this,h.field,h.primer)} key={h.id} style={thstyle} className="header">{h.text}</th>;
         });
         var vehicleDetail = '';
         if(this.state.vehicleDetailVisible){
@@ -84,7 +83,7 @@ class SearchResult extends Component
                 </Modal> 
         function getTds(row){
              return headers.map(function(h){
-                    <td>{row[h.field]}</td>
+                    return <td key={h.id}>{row[h.field]}</td>
              });
         }    
         var data = this.state.sortedResults ||  this.props.results;
@@ -102,7 +101,7 @@ class SearchResult extends Component
                 <table className="textBlack SortableTable" style={tableStyle}>
                     <thead>
                         <tr style={{height:'30px'}} className="searchResults">
-                            {headers}
+                            {ths}
                         </tr>
                     </thead>
                        <tbody>
