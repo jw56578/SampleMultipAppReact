@@ -15,7 +15,8 @@ class MakeDropDownComponent extends Component
     render(){
         var year = this.props.year ? this.props.year.year : null;
         var makes = this.props.makes && year && this.props.makes[this.props.source.name][year] ? this.props.makes[this.props.source.name][year] : [];
-        return <DropDown changedHandler={this.makeChangeHandler} data={makes} keyProp={'id'} text={'description'} value={'id'}  style={this.props.style}/>
+        var promptText = this.props.makes ? "--Select--" : this.props.year ?  "Loading..." : null;
+        return <DropDown promptText={promptText} changedHandler={this.makeChangeHandler} data={makes} keyProp={'id'} text={'description'} value={'id'}  style={this.props.style}/>
     }
 }
 function mapStateToProps(state){

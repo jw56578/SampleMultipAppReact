@@ -47,23 +47,12 @@ function Fetching(state=null,action){
     return state;
 }
 
-//that is the whole problem, i can't call a "start" action from updatesearchresults to kick this whole thing off
-//do i need to use redux-thunk??
-/*
-okay the action can do whatever I want it to no it can't because it doesn't have access to the dispatcher to make an action go to the reducers
- */
 
-//there needs to be redcuers for when isFetching is false
-//the problem is that you can't invoke something to start this off because of redux promise
-//the component will have to do it itself
-//so in the component you would call???
+//do i need to use redux-thunk??
+//okay the action can do whatever I want it to no it can't because it doesn't have access to the dispatcher to make an action go to the reducers
 /*
 this damn thing has to be used from the component because its the only place you can bind to dispatch other wise it will never go through the pipeline,
-this is what needs to change somehow
-startFetching();
-this will update the reducers and it should have isFetching and some key value to indicate if the component cares
-
-
+yes somehow the actions need to have access to dispatch
  */
 
 export default rootReducer;

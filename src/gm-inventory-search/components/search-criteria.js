@@ -80,8 +80,9 @@ class SearchCriteria extends Component
     }
     render(){
         // compose of the isFetching and this.state.modalMessage
-        const{fetching,entity,options} = this.props;
-        var modalMessage = fetching && fetching.isFetching ? <span>{this.state.modalMessage}</span> : '';
+        const{fetching,entity,options,results} = this.props; 
+        var modalMessage = fetching && fetching.isFetching ? <span>{this.state.modalMessage}</span> : 
+            results && results.length >=0 ? <span>Found {results.length} records</span> : '';
         var gmsource = this.gmsource;
         var inputStyle= {width:'100px'};
         var divTableStyle = {height:'12em',display:'inline-block',marginRight:'50px'};
@@ -216,8 +217,9 @@ class SearchCriteria extends Component
                 </table>
             </div>
             <br/>
-            {modalMessage}
             <span>{this.state.errorMessage}</span><br/>
+            {modalMessage}
+           
             
         </div>
 
@@ -232,7 +234,8 @@ function mapStateToProps(state){
         trim:state.vehicleSelectorTrim,
         entity:state.getEntity,
         options:state.vehicleSelectorOption,
-        fetching:state.fetching
+        fetching:state.fetching,
+        results:state.searchResults
     }
 }
 function mapDispatchToProps(dispatch){

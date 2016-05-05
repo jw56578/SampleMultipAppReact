@@ -28,7 +28,7 @@ class DropDown extends Component
                 return <option  key={key} value={val}>{text}</option>
             }.bind(this));  
         }
-        var prompt = this.props.multiselect ? null: <option value="">--Select--</option>;
+        var prompt = this.props.multiselect || !this.props.promptText ? null: <option value="">{this.props.promptText}</option>;
         return(
             <select multiple={this.props.multiselect} onChange={this.optionChanged} value={this.props.selectedValue} style={this.props.style}>
                 {prompt}

@@ -13,7 +13,8 @@ class YearDropDownComponent extends Component
     render(){
         var years = this.props.years ? this.props.years[this.props.source.name] : [];
         years.sort(function(a, b){return parseInt(b.year)-parseInt(a.year)});
-        return <DropDown keyProp={'year'} value={'year'} text={'year'} changedHandler={this.yearChangeHandler} data={years}  style={this.props.style}/>
+        var promptText = this.props.years ? "--Select--" : "Loading...";
+        return <DropDown promptText={promptText} keyProp={'year'} value={'year'} text={'year'} changedHandler={this.yearChangeHandler} data={years}  style={this.props.style}/>
     }
 }
 

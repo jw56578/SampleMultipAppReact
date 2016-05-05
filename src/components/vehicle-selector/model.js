@@ -17,9 +17,8 @@ class ModelDropDownComponent extends Component
         var make = this.props.make ? this.props.make.make : null;
         var models = this.props.models || [];// && year && make? this.props.models[this.props.source.name][year][make] : [];
         models.sort(function(a, b){if (a.description < b.description)return -1;else if (a.description > b.description)return 1;else return 0;});
-         
-    
-        return <DropDown changedHandler={this.modelChangeHandler} data={models} keyProp={'id'} text={'description'} value={'id'}  style={this.props.style}/>
+        var promptText = this.props.models ? "--Select--" : this.props.make ?  "Loading..." : null;
+        return <DropDown promptText={promptText} changedHandler={this.modelChangeHandler} data={models} keyProp={'id'} text={'description'} value={'id'}  style={this.props.style}/>
     }
 }
 function mapStateToProps(state){
