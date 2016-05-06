@@ -16,7 +16,8 @@ class OptionDropDownComponent extends Component
         //var year = this.props.year ? this.props.year.year : null;
         //var make = this.props.make ? this.props.make.make : null;
         var options = this.props.options || [];// && year && make? this.props.models[this.props.source.name][year][make] : [];
-        return <DropDown selectedValue={this.props.selectedValue} multiselect={true} changedHandler={this.optionChangedHandler} data={options} keyProp={'id'} text={'description'} value={'id'}  style={this.props.style}/>
+        var filteredOptions = this.props.filter ? options.filter((o)=> o.description.toLowerCase().indexOf(this.props.filter.toLowerCase()) > -1) : options;
+        return <DropDown selectedValue={this.props.selectedValue} multiselect={true} changedHandler={this.optionChangedHandler} data={filteredOptions} keyProp={'id'} text={'description'} value={'id'}  style={this.props.style}/>
     }
 }
 function mapStateToProps(state){

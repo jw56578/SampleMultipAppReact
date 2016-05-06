@@ -8,14 +8,20 @@ import {updateSearchResults,updateSearchCriteria} from '../actions/search';
 import {GMVehicleSelectorSource} from '../../components/vehicle-selector';
 import {save,getEntity} from '../../actions/entity';
 import {getChildCompanyId} from '../../services/authentication';
-import Modal from 'react-modal';
+//import Modal from 'react-modal';
 import {getSearchingMessage,getErrorMessage} from '../messages'
 import {isFetching} from '../../actions/fetching';
-
+import {OPTIONS_REMOVED} from '../reducers';
 var externalSearchExport = function(){
 }
 var externalSearch = function() {
     externalSearchExport()
+}
+var unselectOption = function(opt){
+    return {
+            type:OPTIONS_REMOVED,
+            payload:opt
+    }
 }
 class SearchCriteria extends Component
 { 
@@ -26,7 +32,8 @@ class SearchCriteria extends Component
         this.updateSearchResults = this.updateSearchResults.bind(this);
         this.stateChangedHandler = this.stateChangedHandler.bind(this);
         this.clear = this.clear.bind(this);
-        this.state= {showModal:false,states : null,errorMessage:'',searchCriteria:{}};
+        this.state= {showModal:false,states : null,errorMessage:'',searchCriteria:{distance:500}};
+        this.filterOptions = this.filterOptions.bind(this);
         this.gmsource = new GMVehicleSelectorSource();
         
     }
@@ -35,6 +42,19 @@ class SearchCriteria extends Component
         externalSearchExport =this.updateSearchResults;
         //load all ajax things in componentDidMount
         this.props.getEntity('state');
+        var heartBeat = function(){
+            setTimeout(()=>{
+                if (!this.props.year > 0){
+                    this.setState({modalMessage:'We are having difficultly retrieving information from the GM system.'});
+                    hearBeat();
+                }
+                else{
+                    this.setState({modalMessage:''});
+                }
+            },5000);
+        }.bind(this);
+        //why does this break things when the modal message is set else where
+        //heartBeat();
     }
     updateSearchResults(){
         var opts = this.props.options  ? this.props.options.options : null;
@@ -45,7 +65,7 @@ class SearchCriteria extends Component
                     make :make  && make.make? make.make.id : null,
                     model : model && model.model? model.model.id : null,
                     sellingSourceId : make  && make.make ? make.make.sellingSourceId : null,
-                    optionCodes: opts,
+                    optionCodes: this.props.selectedOptions
                 };
         criteria = Object.assign({},this.state.searchCriteria,criteria);
         var errormessage = getErrorMessage(criteria);
@@ -73,7 +93,10 @@ class SearchCriteria extends Component
         var criteria = Object.assign({},this.state.searchCriteria,states);
         this.setState({searchCriteria:criteria});
     }
- 
+    filterOptions(e){
+        var filter = e.target.value;
+        this.setState({filter});
+    }
     clear(){
         this.setState({searchCriteria:{}});   
         this.props.setOption(1,null);
@@ -88,11 +111,13 @@ class SearchCriteria extends Component
         var divTableStyle = {height:'12em',display:'inline-block',marginRight:'50px'};
         var states = entity ?  entity.entity : [];
         var selectedOptions = options && options.options ? typeof options.options === 'string' ? [options.options] : options.options : [];
-        var chooseTrim =    <Modal
-                    isOpen={this.state.showModal}
-                    >
-                    {this.state.modalMessage}
-                </Modal>   
+        var optionButtons = this.props.selectedOptions ? this.props.selectedOptions.map((o)=>{
+            var opt =  this.props.allOptions.find((all)=>{return all.id === o});
+            if(opt)
+                return <div key={opt.id} style={{display:'inline-block',padding:'1px 1px 1px 1px'}}><button onClick={this.props.unselectOption.bind(this,opt.id)} style={{padding:'4px 4px 4px 4px'}}>X {opt.description}</button></div>
+        }) : []; 
+       
+ 
         return(
         <div>
             <br/>
@@ -141,7 +166,9 @@ class SearchCriteria extends Component
                         <tr>
                             <td>
                                 Options:<br/>
-                                <OptionDropDown selectedValue={selectedOptions} source={gmsource} id={1} style={{width:'400px',height:'10em'}}/>
+                                <input onChange={this.filterOptions} style={{width:'400px'}} placeholder="Filter:" />
+                                <br/>
+                                <OptionDropDown filter={this.state.filter} selectedValue={selectedOptions} source={gmsource} id={1} style={{width:'400px',height:'10em'}}/>
                             </td>
                         </tr>
                     </tbody>
@@ -215,7 +242,11 @@ class SearchCriteria extends Component
                     </tr>
                     </tbody>
                 </table>
+                
             </div>
+            <div >
+              {optionButtons}
+               </div>
             <br/>
             <span>{this.state.errorMessage}</span><br/>
             {modalMessage}
@@ -228,18 +259,21 @@ class SearchCriteria extends Component
 }
 function mapStateToProps(state){
     return {
+        years:state.vehicleSelectorYears,
         year:state.vehicleSelectorYear,
         make:state.vehicleSelectorMake,
         model:state.vehicleSelectorModel,
         trim:state.vehicleSelectorTrim,
         entity:state.getEntity,
-        options:state.vehicleSelectorOption,
+        allOptions:state.vehicleSelectorOptions, // all options that are currently loaded
+        options:state.vehicleSelectorOption, //options choosen in drop down
         fetching:state.fetching,
-        results:state.searchResults
+        results:state.searchResults,
+        selectedOptions: state.selectedOptions // options that are selected and should be buttons
     }
 }
 function mapDispatchToProps(dispatch){
-    return bindActionCreators({updateSearchResults,getEntity,setOption,isFetching},dispatch);
+    return bindActionCreators({updateSearchResults,getEntity,setOption,isFetching,unselectOption},dispatch);
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(SearchCriteria);

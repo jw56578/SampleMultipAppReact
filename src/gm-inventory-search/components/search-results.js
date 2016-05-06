@@ -2,21 +2,24 @@
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import Modal from 'react-modal';
-import Popout from 'react-popout';
-
+//import Popout from 'react-popout';
+import {setSearchResults} from '../actions/search';
+import {sortBy} from '../../services/sort';
+import VehicleDetail from './vehicle-detail';
 class SearchResult extends Component
 { 
     constructor(props, context) {
         super(props, context);
         this.state = {vehicleDetailVisible:false};
         this.sort = this.sort.bind(this);
-        this.sortFields ={};
+        this.showVehicleDetail = this.showVehicleDetail.bind(this);
+        this.sortFields =null;
     }
     componentDidMount(){
        
     }
-    showVehicleDetail(){
-        this.setState({vehicleDetailVisible:true});
+    showVehicleDetail(inventory){
+        this.setState({vehicleDetailVisible:true,currentInventory:inventory});
     }
     sort(field,p){
         /**
@@ -24,26 +27,17 @@ class SearchResult extends Component
          * this means that you cannot modify the things on props because its readonly
          * you have to send the sort through the entire redux pipeline just to get the results back
          * if there is a generic sort function for the entire app, how can it handle sorting the specific thing for gm search resuls
-         * a quick fix is to sort the results on props and assign to a new state field , then in render check for that field to exist and use it
-         * but this is going to break when you do another search because it will be ignored since the sortedResults are there
+         * a quick fix is to sort the results on props which sorts the actual array object itself, but then render isn't called again 
+         * because its the same object so you have to call setState with nothing in it
+         * this is bad cause its mutating state, o well
          */
-         //move all the sort stuff to reusable thing or import existing package
-
-        var sortBy = function(field, reverse, primer){
-
-            var key = primer ? 
-                function(x) {return primer(x[field])} : 
-                function(x) {return x[field]};
-
-            reverse = !reverse ? 1 : -1;
-
-            return function (a, b) {
-                return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
-                } 
-        }
+        if(this.sortFields == null)
+            this.sortFields ={};
         var reverse = this.sortFields[field] !== undefined ? this.sortFields[field] = !this.sortFields[field]  :  this.sortFields[field] = false;
-        var sortedResults = this.props.results.sort(sortBy(field,reverse,p));
-        this.setState({sortedResults});
+        //var sortedResults = 
+        this.props.results.sort(sortBy(field,reverse,p));
+        this.setState({});
+        //this.props.setSearchResults(sortedResults);
     }
     render(){
         
@@ -70,27 +64,29 @@ class SearchResult extends Component
             return <th onClick={this.sort.bind(this,h.field,h.primer)} key={h.id} style={thstyle} className="header">{h.text}</th>;
         });
         var vehicleDetail = '';
+        /*
         if(this.state.vehicleDetailVisible){
             vehicleDetail = 
             <Popout url='https://www.eleadcrm.com/evo2/fresh/elead-v45/elead_track/vehicle/vehicledetail.aspx?vehicleid=2509194&companyid=8749' title='Window title' >
             <div></div>
             </Popout>
         }
-        var chooseTrim =    <Modal
-                    isOpen={false}
-                    >
-                    put a drop down here to choose the trim 
-                </Modal> 
+        */
+        vehicleDetail =  <VehicleDetail inventory={this.state.currentInventory} close={()=>{this.setState({vehicleDetailVisible:false})}} show={this.state.vehicleDetailVisible} />
         function getTds(row){
              return headers.map(function(h){
                     return <td key={h.id}>{row[h.field]}</td>
              });
         }    
-        var data = this.state.sortedResults ||  this.props.results;
+        var data = this.props.results;
+        if(this.sortFields == null && data){
+            this.sortFields= {distance:false};
+            data.sort(sortBy('distance',false,parseFloat));
+        }
         var trs = data ? 
-            data.map(function(inv){
+            data.map((inv)=>{
                 var tds = getTds(inv);
-                return <tr key={inv.vin} className="resultRow" style={{cursor:"pointer"}}>
+                return <tr onClick={this.showVehicleDetail.bind(this,inv)} key={inv.vin} className="resultRow" style={{cursor:"pointer"}}>
                     {tds}
                 </tr>  
             })
@@ -121,7 +117,7 @@ function mapStateToProps(state){
     }
 }
 function mapDispatchToProps(dispatch){
-    return bindActionCreators({},dispatch);
+    return bindActionCreators({setSearchResults},dispatch);
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(SearchResult);

@@ -76,3 +76,4 @@ export {setModel};
 export {setOption};
 export {fetchModels}
 export {fetchOptions}
+export {OPTIONS_CHANGED}

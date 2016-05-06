@@ -10,6 +10,12 @@ function updateSearchCriteria(criteria){
         payload:criteria
     }
 }
+function setSearchResults(data){
+     return {
+        type:UPDATE_SEARCH_RESULTS,
+        payload:{data:data}
+    }
+}
 function updateSearchResults(criteria){
      return {
         type:UPDATE_SEARCH_RESULTS,
@@ -19,5 +25,6 @@ function updateSearchResults(criteria){
 
 export {updateSearchCriteria};
 export {updateSearchResults};
+export {setSearchResults};
 export {UPDATE_SEARCH_CRITERIA};
 export {UPDATE_SEARCH_RESULTS};
